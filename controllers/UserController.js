@@ -3,6 +3,7 @@ const db = require("../models/index");
 const bcrypt = require('bcrypt');
 
 const UserSchema = db.users
+
 const {isEmpty} = require("../helpers/CommonHelper")
  const getAllUsers = async (reqs,res) => {
     try {
@@ -27,7 +28,7 @@ const createUser = async (reqs,res) => {
         const userPassword = request?.password || "";
         const userDOB = request?.dob || "";
         if(isEmpty(userName) || isEmpty(userEmail) || isEmpty(userMobile) || isEmpty(userEmail) || isEmpty(userPassword)){
-            res.status(400).json({
+            return res.status(400).json({
                 'status' :'failed',
                 'status_code':400,
                 'error':'All Fields are required.'
@@ -78,7 +79,7 @@ const createUser = async (reqs,res) => {
 const getUser = async (reqs,res) => {
     try {
         
-        res.status(200).json({
+        return res.status(200).json({
             'status':'success',
             'status_code' : 200,
             'data':[],
@@ -91,7 +92,7 @@ const getUser = async (reqs,res) => {
 const updateUser = async (reqs,res) => {
     try {
         
-        res.status(200).json({
+        return res.status(200).json({
             'status':'success',
             'status_code' : 200,
             'data':[],

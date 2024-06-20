@@ -2,20 +2,27 @@ const  sequelize = require('sequelize');
 const db = require("../models/index");
 const ProductCategory = db.ProductCategory
 const {isEmpty} = require("../helpers/CommonHelper")
+const path = require('path')
 
-
-const createProductCategory = async (reqs,res) => {
+const createProductCategory = async (req,res) => {
     try {
-        const request = reqs.body || 'not found';
+
+        let filePath = "";
+        let fileOriginalName = "";
+        if(req.file){
+            filePath = path.resolve(__dirname, '..', req.file.path);
+            fileOriginalName = req?.file?.originalname || "" 
+        }
+        const request = req.body || 'not found';
         const name = request?.name || "";
         const description = request?.description || "";
         const status = request?.status || "";
 
         if(isEmpty(name) || isEmpty(description) || isEmpty(status)){
             return res.status(400).json({
-                'status' :'failed',
-                'status_code':400,
-                'error':'All Fields are required.'
+                status : 'failed',
+                status_code : 400,
+                errors : ['All Fields are required.']
             });
         }
         console.log('ProductCategorySchema',ProductCategory)
@@ -28,15 +35,17 @@ const createProductCategory = async (reqs,res) => {
           });
         if(categoryExists>0){
            return  res.status(401).json({
-                'status' :'error',
-                'status_code':400,
-                'data':'Product Category Already Exists!'
+                status : 'error',
+                status_code : 400,
+                errors : ['Product Category Already Exists!']
             })
         }
         categroyData = await ProductCategory.create({
             name:name,
             description:description,
-            status:status
+            status:status,
+            image:filePath,
+            image_original_name:fileOriginalName
         }).then((categroyData) => {
            return  res.status(200).json({
                 'status':'success',
@@ -57,11 +66,144 @@ const createProductCategory = async (reqs,res) => {
         return res.status(500).json({
             'status' :error,
             'status_code':500,
-            'data':error
+            'error':error
         });
     }
 }
 
+const getAllProductCategories = async(req, res) =>{
+    try {
+        const categoriesData  = await ProductCategory.findAll();
+        return res.json({
+            'categoryData':categoriesData,
+            'status':'success',
+            'status_code':200,
+            'mssg':'Categories Data Fetched Successuflly'
+        });
+    } catch (error) {
+       console.log('error',error) 
+    }
+}
+
+const getSingleProductCategoryData = async(req, res) =>{
+    try {
+        const id = req?.params.id || "";
+        // console.log('paren',req?.params.id);
+        // console.log('query',req?.query);
+        // console.log('body',req?.body);
+
+        const categoriesData  = await ProductCategory.findOne({
+            where:{
+                id:id
+            }
+        });
+        let messg = "Category Not Found!";
+        if(categoriesData){
+            messg = 'Categories Data Fetched Successuflly';
+        }
+        return res.json({
+            'categoryData':categoriesData,
+            'status':'success',
+            'status_code':200,
+            'mssg':messg
+        });
+    } catch (error) {
+       console.log('error',error) 
+    }
+}
+
+const deleteCategory = async(req, res) =>{
+    try {
+        const id = req?.params.id || "";
+        // console.log('paren',req?.params.id);
+        // console.log('query',req?.query);
+        // console.log('body',req?.body);
+
+        const categoriesData  = await ProductCategory.destroy({
+            where:{
+                id:id
+            }
+        });
+        let messg = "Category Not Found!";
+        if(categoriesData){
+            messg = 'Categories Deleted Successufully';
+        }
+        return res.json({
+            'status':'success',
+            'status_code':200,
+            'mssg':messg
+        });
+    } catch (error) {
+       console.log('error',error) 
+    }
+}
+
+const updateSingleCategory = async(req, res) =>{
+    try{
+        let filePath = "";
+        let fileOriginalName = "";
+        if(req.file){
+            filePath = path.resolve(__dirname, '..', req.file.path);
+            fileOriginalName = req?.file?.originalname || "" 
+        }
+        const request = req.body || 'not found';
+        const name = request?.name || "";
+        const description = request?.description || "";
+        const status = request?.status || "";
+        const categoryId = request?.id || "";
+
+        if(isEmpty(name) || isEmpty(description) || isEmpty(status) || isEmpty(categoryId)){
+            return res.status(400).json({
+                status : 'failed',
+                status_code : 400,
+                errors : ['All Fields are required.']
+            });
+        }
+        const categoryData = await ProductCategory.findOne({
+            where:{
+                id:categoryId
+            }
+        });
+
+        if(!categoryData){
+            return res.status(400).json({
+                'status':'failed',
+                'status_code':400,
+                'errors':['Category Not found!']
+
+            });
+        }
+        categoryData.name = name;
+        categoryData.description = description;
+        categoryData.status = status;
+        if(!isEmpty(fileOriginalName)){
+            categoryData.image = filePath;
+            categoryData.image_original_name= fileOriginalName
+        }
+        const updatedCategoryData = await categoryData.save();
+        if(updatedCategoryData){
+            return res.json({
+                'status' : 'success',
+                'status_code':200,
+                'mssg' :"Category Updated Successfully!"
+            })
+        }
+
+
+    }catch(e){
+        console.log('error while updating category',e);
+        return res.json({
+            'status' : 'failed',
+            'status_code':401,
+            'errors':['Something went wrong']
+        })
+    }
+}
+
 module.exports = {
-    createProductCategory
+    createProductCategory,
+    getAllProductCategories,
+    getSingleProductCategoryData,
+    deleteCategory,
+    updateSingleCategory
 }

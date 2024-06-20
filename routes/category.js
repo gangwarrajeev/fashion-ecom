@@ -1,14 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const {createProductCategory} = require("../controllers/ProductCategoryController");
+const {createProductCategory,getAllProductCategories,getSingleProductCategoryData,deleteCategory,updateSingleCategory} = require("../controllers/ProductCategoryController");
+const upload= require('../services/imageUpload');
 
-router.route("/").get((req, res)=>{
-    return res.send({
-        'status':'success',
-        'status_code':200,
-        'message':'category called successsfully'
-    });
-})
-router.post("/",createProductCategory);
-
+router.route("/").get(getAllProductCategories)
+router.post("/",upload.single('product_category_img'),createProductCategory);
+router.put("/:id",upload.single('product_category_img'),updateSingleCategory);
+router.get('/:id',getSingleProductCategoryData);
+router.delete('/:id',deleteCategory)
 module.exports = router;
