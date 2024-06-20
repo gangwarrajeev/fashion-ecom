@@ -5,7 +5,7 @@ import ProdutCreate from "@views/admin/product/create.vue";
 import ProductShow from "@views/admin/product/show.vue";
 import ProductList from "@views/admin/product/list.vue";
 import ProductCategoryCreate from "@views/admin/productCategory/create.vue"
-
+import ProductCategoryLists from "@views/admin/productCategory/index.vue"
 const routes = [
     {
         path:"/admin",
@@ -49,10 +49,22 @@ const routes = [
         ]
     },
     {
-        path: '/admin/product-category/create',
-        component:ProductCategoryCreate,
-        name:"productCategory.create"
-    }
+      path: '/admin/product-category/create',
+      component:ProductCategoryCreate,
+      name:"productCategory.create",
+      meta: { reuse: false },
+    },
+    {
+      path: '/admin/product-category/update/:id',
+      component:ProductCategoryCreate,
+      name:"productCategory.update",
+      meta: { reuse: false },
+    },
+    {
+      path: '/admin/product-category/',
+      component:ProductCategoryLists,
+      name:"productCategory.index"
+  }
 ]
 
 export default routes;

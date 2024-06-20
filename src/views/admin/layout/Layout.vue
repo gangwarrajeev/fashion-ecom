@@ -14,20 +14,22 @@
     </div>
   </div>
 </template>
-<script>
+<script setup>
+import { ref, provide } from 'vue'
 import SidebarView from "./Sidebar.vue"
 import FooterView from "./Footer.vue"
 import NavbarView from './Navbar.vue'
-export default{
-  components:{
-    SidebarView,
-    FooterView,
-    NavbarView
-  },
-  methods:{
+// export default{
+//   components:{
+//     SidebarView,
+//     FooterView,
+//     NavbarView
+//   },
+//   methods:{
     
-  }
-}
+//   }
+// }
+provide('testpath', '/project/')
 </script>
 <style >
 @import url("/admin/assets/css/style.css");

@@ -100,8 +100,8 @@
                </a>
                <div class="collapse" id="product-category">
                    <ul class="nav flex-column sub-menu">
-                       <li class="nav-item"> <RouterLink to="/admin/product-category/create" class="nav-link">Add New</RouterLink></li>
-                       <li class="nav-item"> <RouterLink to="/admin/products/create" class="nav-link">View All</RouterLink></li>
+                       <li class="nav-item"> <RouterLink :to="{name:'productCategory.create'}" class="nav-link">Add New</RouterLink></li>
+                       <li class="nav-item"> <RouterLink to="/admin/product-category/" class="nav-link">View All</RouterLink></li>
                    </ul>
                </div>
            </li>

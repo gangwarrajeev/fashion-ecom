@@ -37,12 +37,11 @@
 import LayoutView from '../layout/Layout.vue';
 import faFaIcon from '../../../components/faFaIcon.vue';
 import { useForm } from 'vee-validate';
-import { ref,reactive, onMounted,onUnmounted, watch,inject   } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref,reactive, onMounted,onUnmounted, watch  } from 'vue';
 import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import { useRoute } from 'vue-router';
-import { isEmpty } from '../../../helpers/CommonFunctions';
+
 const api_save_category = ref("/api/product-category");
 const api_get_category_data = ref("/api/product-category");
 const categoryName = ref("");
@@ -58,11 +57,8 @@ function handleFileUpload(event) {
       categoryImage.value = event.target.files[0];
       console.log('image is',categoryImage.value)
 }
-
 const route = useRoute();
-const router = useRouter()
-const appName = inject('appName')
-console.log('injectedValue',appName)
+
 onMounted(() => {
     
     console.log(route.query);
@@ -77,23 +73,23 @@ onMounted(() => {
     }
 })
 
-// onUnmounted(() => {
-//     console.log('unmounted');
-//     categoryName.value = null;
-//     categoryDescription.value = null;
-//     categoryStatus.value = null;
-//     categoryImage.value = null;
-//     categoryId.value = null;
-//     submitButtonText.value = null;
-//     formHeading.value = null;
-//     formMethod.value = null;
-// })
+onUnmounted(() => {
+    console.log('unmounted');
+    categoryName.value = null;
+    categoryDescription.value = null;
+    categoryStatus.value = null;
+    categoryImage.value = null;
+    categoryId.value = null;
+    submitButtonText.value = null;
+    formHeading.value = null;
+    formMethod.value = null;
+})
 
 function saveCategory(){
     try{
 
         let formData = new FormData();
-        if(!isEmpty(categoryId.value)){
+        if(categoryId!=="" && categoryId!==undefined){
             formData.append('id',categoryId.value); 
         }
         formData.append('name',categoryName.value);
@@ -106,7 +102,7 @@ function saveCategory(){
 
         // console.log('apiIs',api_save_category)
         
-        axios[formMethod.value](api_save_category.value,formData,{
+        axios.formMethod(api_save_category.value,formData,{
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -115,32 +111,11 @@ function saveCategory(){
         then((response) => {
             console.log('response is',response)
             if(response.data.status_code=='200'){
-                let messg = 'Category Created Successfully';
-                if(!isEmpty(categoryId.value)){
-                    messg = 'Category Updated Successfully';
-                    // router.push('home')
-                    // router.push({ path: 'home' })
-                    // // named route
-                    // router.push({ name: 'user', params: { userId: '123' } })
-                    // // with query, resulting in /register?plan=private
-                    // router.push({ path: 'register', query: { plan: 'private' } })
-                    // const userId = '123'
-                    // router.push({ name: 'user', params: { userId } }) // -> /user/123
-                    // router.push({ path: `/user/${userId}` }) // -> /user/123
-                    // router.go(1)
-                    // router.go(-1)
-                    //router.replace(...)
-
-                    router.push({ name: 'productCategory.index' })
-                }
-                toast.success(messg)
-
-                
+                toast.success('Category Created Successfully')
                 categoryName.value = "";
                 categoryDescription.value = "";
                 categoryStatus.value = ""
                 this.categoryImage = null;
-                
             }
         }).catch((e)=>{
             console.log('erorr',e)
@@ -186,25 +161,25 @@ export default {
 </script> -->
 
 <style>
-/* ::-webkit-input-placeholder { 
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
     color:    #909 !important;
 }
-:-moz-placeholder {
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
    color:    #909 !important;
    opacity:  1;
 }
-::-moz-placeholder { 
+::-moz-placeholder { /* Mozilla Firefox 19+ */
    color:    #909 !important;
    opacity:  1;
 }
-:-ms-input-placeholder { 
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
    color:    #909 !important;
 }
-::-ms-input-placeholder { 
+::-ms-input-placeholder { /* Microsoft Edge */
    color:    #909 !important;
 }
 
-::placeholder { 
+::placeholder { /* Most modern browsers support this now. */
    color:    #909 !important;
-} */
+}
 </style>
