@@ -10,7 +10,8 @@ const createProductCategory = async (req,res) => {
         let filePath = "";
         let fileOriginalName = "";
         if(req.file){
-            filePath = path.resolve(__dirname, '..', req.file.path);
+            // filePath = path.resolve(__dirname, '..', req.file.path);
+            filePath = req.file.path.replace(/\\/g, '/')
             fileOriginalName = req?.file?.originalname || "" 
         }
         const request = req.body || 'not found';
@@ -52,6 +53,7 @@ const createProductCategory = async (req,res) => {
                 'status_code' : 200,
                 'data':categroyData,
                 'mssg':'Category created successfully!',
+                'file':req?.file
             });
         }).catch((error) => {
             return res.status(400).json({
@@ -73,7 +75,15 @@ const createProductCategory = async (req,res) => {
 
 const getAllProductCategories = async(req, res) =>{
     try {
-        const categoriesData  = await ProductCategory.findAll();
+        let categoriesData  = await ProductCategory.findAll();
+        if(categoriesData.length){
+            categoriesData =  categoriesData.map((item) =>{
+                const image =  `${req.protocol}://${req.get('host')}/${item.image}`;
+                item.image = image;
+                return item;
+                
+            })
+        }
         return res.json({
             'categoryData':categoriesData,
             'status':'success',
@@ -143,7 +153,7 @@ const updateSingleCategory = async(req, res) =>{
         let filePath = "";
         let fileOriginalName = "";
         if(req.file){
-            filePath = path.resolve(__dirname, '..', req.file.path);
+            filePath = req.file.path.replace(/\\/g, '/')
             fileOriginalName = req?.file?.originalname || "" 
         }
         const request = req.body || 'not found';

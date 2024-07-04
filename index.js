@@ -8,6 +8,7 @@ const morgan = require('morgan')
 const indexRouter = require("./routes/index");
 const {erorrHandler} = require("./errrorHandler/ErrorHandler")
 
+app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use(morgan('dev'));
 app.use(cors()) 
 app.use(express.json())
